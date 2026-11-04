@@ -1,0 +1,20 @@
+{
+  "schema_version": "4.0",
+  "requirement": {
+    "id": "REQ-2048",
+    "title": "活动报名功能",
+    "description": "支持用户查看活动详情、填写报名信息并提交；支持报名状态管理与数据查询。",
+    "priority": "medium"
+  },
+  "stage_status": {
+    "understanding": "completed",
+    "breakdown": "completed",
+    "estimation": "completed",
+    "scheduling": "completed"
+  },
+  "revision": {
+    "version": 1,
+    "last_modified_by": "ai",
+    "changes": []
+  }
+}
