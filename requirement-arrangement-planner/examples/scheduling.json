@@ -1,0 +1,38 @@
+{
+  "schema_version": "4.0",
+  "requirement_id": "REQ-2048",
+  "summary": {
+    "start_date": "2026-11-05",
+    "delivery_date": "2026-11-09",
+    "estimated_working_days": 3,
+    "critical_path": [
+      "BE-01",
+      "QA-01"
+    ]
+  },
+  "schedule": [
+    {
+      "task_id": "FE-01",
+      "assignee": "前端 B",
+      "start_date": "2026-11-05",
+      "end_date": "2026-11-05"
+    },
+    {
+      "task_id": "BE-01",
+      "assignee": "后端 A",
+      "start_date": "2026-11-05",
+      "end_date": "2026-11-06"
+    },
+    {
+      "task_id": "QA-01",
+      "assignee": "后端 A",
+      "start_date": "2026-11-09",
+      "end_date": "2026-11-09"
+    }
+  ],
+  "revision": {
+    "version": 1,
+    "last_modified_by": "ai",
+    "changes": []
+  }
+}
