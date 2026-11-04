@@ -1,0 +1,14 @@
+{
+  "schema_version": "4.0",
+  "requirement_id": "<requirement-id>",
+  "summary": {
+    "start_date":"2026-11-05",
+    "delivery_date":"2026-11-05",
+    "estimated_working_days":1,
+    "critical_path":["FE-01"]
+  },
+  "schedule": [
+    {"task_id":"FE-01","assignee":"前端待分配","start_date":"2026-11-05","end_date":"2026-11-05"}
+  ],
+  "revision": {"version": 1, "last_modified_by": "ai", "changes": []}
+}
