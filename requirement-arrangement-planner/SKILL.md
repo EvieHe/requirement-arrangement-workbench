@@ -21,7 +21,8 @@ Each stage reads the latest state produced by previous stages. Human edits are a
 ## Before generating
 
 Read:
-- `references/output-contract.md` for field meanings and stage rules.
+- `references/output-contract.md` for the exact field contract and invariants.
+- `references/stage-generation.md` for how to derive each stage from requirement context and human edits.
 - `references/planning-result.template.json` for the exact output shape.
 
 If modifying an existing planning state, preserve stable IDs whenever the same module/task/review item still exists.
