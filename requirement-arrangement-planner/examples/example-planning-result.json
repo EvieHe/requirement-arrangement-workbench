@@ -1,0 +1,265 @@
+{
+  "schema_version": "3.2",
+  "requirement": {
+    "id": "REQ-2048",
+    "title": "活动报名功能",
+    "description": "支持用户查看活动详情、填写报名信息并提交；支持报名状态管理与数据查询。",
+    "priority": "medium"
+  },
+  "evaluation": {
+    "current_stage": "understanding",
+    "stages": {
+      "understanding": {
+        "status": "completed",
+        "output": {
+          "goal": "用户可以查看活动信息、提交报名，并查询报名状态。",
+          "scope": [
+            "活动详情展示",
+            "报名表单与提交",
+            "报名状态查询",
+            "基础异常处理"
+          ],
+          "out_of_scope": [
+            "支付",
+            "审批流",
+            "消息通知"
+          ],
+          "modules": [
+            {
+              "id": "M1",
+              "side": "frontend",
+              "name": "activity-web",
+              "repository": "git/ieg/activity-web",
+              "change_summary": "新增活动详情页、报名入口和报名状态展示。"
+            },
+            {
+              "id": "M2",
+              "side": "frontend",
+              "name": "user-center-web",
+              "repository": "git/ieg/user-center-web",
+              "change_summary": "复用用户态并补充报名结果入口。"
+            },
+            {
+              "id": "M3",
+              "side": "backend",
+              "name": "registration-service",
+              "repository": "git/ieg/registration-service",
+              "change_summary": "新增报名提交、校验、幂等和查询接口。"
+            },
+            {
+              "id": "M4",
+              "side": "backend",
+              "name": "activity-service",
+              "repository": "git/ieg/activity-service",
+              "change_summary": "补充活动报名状态及名额规则。"
+            }
+          ],
+          "assumptions": [
+            "复用现有用户体系",
+            "默认不限制总报名人数",
+            "默认不允许重复报名"
+          ]
+        },
+        "review_items": [
+          {
+            "id": "Q1",
+            "type": "choice",
+            "question": "活动是否限制总报名人数？",
+            "required": true,
+            "ai_assumption": "不限制",
+            "value": null,
+            "custom_value": "",
+            "options": [
+              "不限制",
+              "有限制"
+            ],
+            "impact": "影响 BE-01 并发控制与一致性设计"
+          },
+          {
+            "id": "Q2",
+            "type": "choice",
+            "question": "是否允许同一用户重复报名？",
+            "required": true,
+            "ai_assumption": "不允许",
+            "value": null,
+            "custom_value": "",
+            "options": [
+              "不允许",
+              "允许"
+            ],
+            "impact": "影响 BE-01 / BE-03 校验和数据约束"
+          },
+          {
+            "id": "Q3",
+            "type": "text",
+            "question": "还有哪些关键业务规则需要补充？",
+            "required": false,
+            "ai_assumption": "暂无",
+            "value": "",
+            "impact": "补充内容会参与后续任务拆解和估算"
+          }
+        ]
+      },
+      "breakdown": {
+        "status": "completed",
+        "output": {
+          "task_ids": [
+            "FE-01",
+            "FE-02",
+            "BE-01",
+            "BE-02",
+            "BE-03",
+            "QA-01"
+          ]
+        },
+        "review_items": []
+      },
+      "estimation": {
+        "status": "completed",
+        "output": {
+          "total_effort_days": 8,
+          "high_confidence_tasks": [
+            "FE-01",
+            "BE-02",
+            "BE-03"
+          ],
+          "medium_confidence_tasks": [
+            "FE-02",
+            "BE-01",
+            "QA-01"
+          ],
+          "low_confidence_tasks": []
+        },
+        "review_items": []
+      },
+      "scheduling": {
+        "status": "completed",
+        "output": {
+          "start_date": "2026-11-05",
+          "delivery_date": "2026-11-11",
+          "estimated_working_days": 5,
+          "critical_path": [
+            "BE-01",
+            "FE-02",
+            "QA-01"
+          ]
+        },
+        "review_items": []
+      }
+    }
+  },
+  "tasks": [
+    {
+      "id": "FE-01",
+      "title": "活动详情页面",
+      "category": "frontend",
+      "description": "活动详情、报名入口和状态展示",
+      "effort_days": 1.5,
+      "confidence": "high",
+      "assignee": "前端 B",
+      "start_date": "2026-11-05",
+      "end_date": "2026-11-06",
+      "dependencies": [],
+      "estimate_basis": [
+        "详情结构 0.5d",
+        "状态交互 0.5d",
+        "异常态与自测 0.5d"
+      ]
+    },
+    {
+      "id": "FE-02",
+      "title": "报名交互与接口接入",
+      "category": "frontend",
+      "description": "报名表单、校验、接口调用及异常反馈",
+      "effort_days": 1.5,
+      "confidence": "medium",
+      "assignee": "前端 B",
+      "start_date": "2026-11-09",
+      "end_date": "2026-11-10",
+      "dependencies": [
+        "FE-01",
+        "BE-01"
+      ],
+      "estimate_basis": [
+        "表单与校验 0.5d",
+        "接口接入 0.5d",
+        "异常处理与自测 0.5d"
+      ]
+    },
+    {
+      "id": "BE-01",
+      "title": "报名核心接口",
+      "category": "backend",
+      "description": "报名提交、参数校验、幂等和异常处理",
+      "effort_days": 2,
+      "confidence": "medium",
+      "assignee": "后端 A",
+      "start_date": "2026-11-05",
+      "end_date": "2026-11-06",
+      "dependencies": [],
+      "estimate_basis": [
+        "领域逻辑 1d",
+        "幂等与异常 0.5d",
+        "单测与自测 0.5d"
+      ]
+    },
+    {
+      "id": "BE-02",
+      "title": "活动状态管理",
+      "category": "backend",
+      "description": "活动报名状态与状态判断逻辑",
+      "effort_days": 1,
+      "confidence": "high",
+      "assignee": "后端 C",
+      "start_date": "2026-11-05",
+      "end_date": "2026-11-05",
+      "dependencies": [],
+      "estimate_basis": [
+        "状态模型与逻辑 1d"
+      ]
+    },
+    {
+      "id": "BE-03",
+      "title": "报名数据模型与查询",
+      "category": "backend",
+      "description": "报名记录模型与基础查询",
+      "effort_days": 1,
+      "confidence": "high",
+      "assignee": "后端 C",
+      "start_date": "2026-11-09",
+      "end_date": "2026-11-09",
+      "dependencies": [
+        "BE-01"
+      ],
+      "estimate_basis": [
+        "数据模型 DAO 0.5d",
+        "查询能力 0.5d"
+      ]
+    },
+    {
+      "id": "QA-01",
+      "title": "联调与验收",
+      "category": "other",
+      "description": "前后端联调、主流程与异常场景检查",
+      "effort_days": 1,
+      "confidence": "medium",
+      "assignee": "后端 A",
+      "start_date": "2026-11-11",
+      "end_date": "2026-11-11",
+      "dependencies": [
+        "FE-02",
+        "BE-02",
+        "BE-03"
+      ],
+      "estimate_basis": [
+        "主流程联调 0.5d",
+        "异常场景验收 0.5d"
+      ]
+    }
+  ],
+  "revision": {
+    "version": 1,
+    "last_modified_by": "ai",
+    "changes": []
+  }
+}
