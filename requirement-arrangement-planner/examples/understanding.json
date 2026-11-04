@@ -1,0 +1,54 @@
+{
+  "schema_version": "4.0",
+  "requirement_id": "REQ-2048",
+  "goal": "用户可以查看活动信息、提交报名，并查询报名状态。",
+  "scope": [
+    "活动详情展示",
+    "报名表单与提交",
+    "报名状态查询"
+  ],
+  "out_of_scope": [
+    "支付",
+    "审批流"
+  ],
+  "modules": [
+    {
+      "id": "M1",
+      "side": "frontend",
+      "name": "activity-web",
+      "repository": "git/ieg/activity-web",
+      "change_summary": "新增活动详情页、报名入口和状态展示。"
+    },
+    {
+      "id": "M2",
+      "side": "backend",
+      "name": "registration-service",
+      "repository": "git/ieg/registration-service",
+      "change_summary": "新增报名提交、校验、幂等和查询接口。"
+    }
+  ],
+  "assumptions": [
+    "复用现有用户体系"
+  ],
+  "review_items": [
+    {
+      "id": "Q1",
+      "type": "choice",
+      "question": "活动是否限制总报名人数？",
+      "required": true,
+      "ai_assumption": "不限制",
+      "value": null,
+      "custom_value": "",
+      "options": [
+        "不限制",
+        "有限制"
+      ],
+      "impact": "影响报名接口并发控制与一致性设计"
+    }
+  ],
+  "revision": {
+    "version": 1,
+    "last_modified_by": "ai",
+    "changes": []
+  }
+}
