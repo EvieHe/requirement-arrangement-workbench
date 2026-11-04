@@ -1,0 +1,4 @@
+interface:
+  display_name: "Requirement Arrangement Planner"
+  short_description: "Generate validated staged requirement planning JSON"
+  default_prompt: "Use $requirement-arrangement-planner to turn this software requirement into validated workbench planning JSON."
