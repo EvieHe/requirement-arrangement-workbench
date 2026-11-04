@@ -1,0 +1,14 @@
+{
+  "schema_version": "4.0",
+  "requirement_id": "<requirement-id>",
+  "goal": "<goal>",
+  "scope": ["<scope item>"],
+  "out_of_scope": [],
+  "modules": [
+    {"id":"M1","side":"frontend","name":"<module>","repository":"","change_summary":"<change>"},
+    {"id":"M2","side":"backend","name":"<module>","repository":"","change_summary":"<change>"}
+  ],
+  "assumptions": [],
+  "review_items": [],
+  "revision": {"version": 1, "last_modified_by": "ai", "changes": []}
+}
