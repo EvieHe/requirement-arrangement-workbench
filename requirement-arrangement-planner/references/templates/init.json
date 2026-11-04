@@ -1,0 +1,16 @@
+{
+  "schema_version": "4.0",
+  "requirement": {
+    "id": "<requirement-id>",
+    "title": "<requirement-title>",
+    "description": "<requirement-description>",
+    "priority": "medium"
+  },
+  "stage_status": {
+    "understanding": "ready",
+    "breakdown": "pending",
+    "estimation": "pending",
+    "scheduling": "pending"
+  },
+  "revision": {"version": 1, "last_modified_by": "ai", "changes": []}
+}
