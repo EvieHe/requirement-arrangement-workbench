@@ -3,35 +3,49 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "为一个新增活动报名功能生成 requirement-arrangement workbench 的完整规划 JSON。需求包括活动详情、报名提交、报名状态查询；未明确名额限制和重复报名规则；已知前端仓库 activity-web，后端仓库 registration-service。",
-      "expected_output": "A schema_version 3.2 planning state with four stages, frontend/backend modules, material review items, executable tasks, reconciled estimates, valid dependencies, and a dependency-respecting schedule.",
-      "files": [],
+      "prompt": "当前处于需求理解节点。主动读取当前 XDPai 需求上下文，生成 understanding 阶段 JSON。",
       "expectations": [
-        "Top-level JSON contains schema_version, requirement, evaluation, tasks, revision",
-        "Exactly four evaluation stages exist: understanding, breakdown, estimation, scheduling",
-        "Understanding modules include side, name, repository, and change_summary",
-        "Unknown business rules are represented as review_items instead of fabricated facts",
-        "Breakdown task_ids exactly match top-level task IDs",
-        "Estimation total equals the sum of task effort_days",
-        "Confidence buckets match task confidence values",
-        "Dependencies reference existing tasks and contain no cycle",
-        "Scheduling dates respect dependencies and critical_path IDs exist",
-        "The output passes scripts/validate_planning_result.py"
+        "Only understanding JSON is produced",
+        "modules distinguish frontend/backend and contain repository + change_summary",
+        "review_items use choice/text",
+        "output validates against schema 4.0"
       ]
     },
     {
       "id": 2,
-      "prompt": "基于已有 planning JSON 更新：用户把 BE-01 的 effort_days 从 2 改成 2.5，并把负责人改为后端 C；其他人工修改必须保留。更新所有受影响的下游字段，但不要重新覆盖需求理解和无关任务。",
-      "expected_output": "The human edits remain authoritative, estimation totals/buckets remain consistent, scheduling is reconsidered if needed, and revision records the update.",
-      "files": [],
+      "prompt": "当前处于任务拆解节点。读取 understanding JSON，生成 breakdown JSON。",
       "expectations": [
-        "BE-01 effort_days remains 2.5",
-        "BE-01 assignee remains 后端 C",
-        "Unrelated human-edited values are preserved",
-        "estimation.output.total_effort_days is recomputed",
-        "Only affected downstream outputs are changed",
-        "revision.version increases and revision.changes records the update",
-        "The output passes scripts/validate_planning_result.py"
+        "Only breakdown JSON is produced",
+        "tasks reference valid module_id",
+        "dependencies are valid and acyclic",
+        "no effort or scheduling fields appear"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "当前处于工作量评估节点。读取 breakdown JSON，生成 estimation JSON。",
+      "expectations": [
+        "Every task has exactly one estimation",
+        "basis sums to effort_days",
+        "summary totals and confidence counts reconcile"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "当前处于排期生成节点。读取 breakdown + estimation，并读取可用人员/日历上下文，生成 scheduling JSON。",
+      "expectations": [
+        "Every task has exactly one schedule item",
+        "dependency dates are respected",
+        "critical path references existing tasks",
+        "no fabricated real assignee"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "用户修改了 breakdown 中 BE-01 的依赖。",
+      "expectations": [
+        "breakdown edit is preserved",
+        "estimation and scheduling are treated as stale instead of silently rewritten by breakdown stage"
       ]
     }
   ]
