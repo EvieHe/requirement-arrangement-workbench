@@ -1,0 +1,8 @@
+{
+  "schema_version": "4.0",
+  "requirement_id": "<requirement-id>",
+  "tasks": [
+    {"id":"FE-01","module_id":"M1","title":"<task>","category":"frontend","description":"<description>","dependencies":[]}
+  ],
+  "revision": {"version": 1, "last_modified_by": "ai", "changes": []}
+}
