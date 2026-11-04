@@ -1,103 +1,73 @@
-# Output contract
+# Output contract — schema 4.0
 
-This file defines the canonical data contract consumed by the requirement-arrangement workbench.
+The workbench consumes five independent JSON documents.
 
-## Top-level shape
+## Relationships
 
 ```text
-schema_version
-requirement
-evaluation
-  current_stage
-  stages
-    understanding
-    breakdown
-    estimation
-    scheduling
-tasks
-revision
+init.requirement.id
+  ├─ understanding.requirement_id
+  ├─ breakdown.requirement_id
+  ├─ estimation.requirement_id
+  └─ scheduling.requirement_id
+
+understanding.modules[].id
+  └─ breakdown.tasks[].module_id
+
+breakdown.tasks[].id
+  ├─ breakdown.tasks[].dependencies[]
+  ├─ estimation.estimations[].task_id
+  ├─ scheduling.schedule[].task_id
+  └─ scheduling.summary.critical_path[]
 ```
 
-The UI uses the four stage objects as navigation and uses the shared `tasks` array across breakdown, estimation, and scheduling. Do not duplicate independent task records inside individual stage outputs.
+## init.json
 
-## 1. requirement
+Purpose: shared requirement identity and stage freshness.
 
-| Field | Type | Rule |
-|---|---|---|
-| id | string | Stable requirement ID |
-| title | string | Non-empty |
-| description | string | Original or normalized requirement description |
-| priority | string | Prefer `high`, `medium`, `low`; preserve source vocabulary if necessary |
+Required fields:
+- `schema_version = "4.0"`
+- `requirement.id/title/description/priority`
+- `stage_status.understanding/breakdown/estimation/scheduling`
+- `revision`
 
-## 2. evaluation
+Stage status enum: `pending | ready | completed | stale`.
 
-### current_stage
+## understanding.json
 
-One of:
-- `understanding`
-- `breakdown`
-- `estimation`
-- `scheduling`
+Purpose: render the 需求理解 tab.
 
-It indicates which stage the UI should open by default. It does not mean previous stages may be discarded.
+Required:
+- `schema_version`
+- `requirement_id`
+- `goal`
+- `scope[]`
+- `out_of_scope[]`
+- `modules[]`
+- `assumptions[]`
+- `review_items[]`
+- `revision`
 
-### stage status
-
-Each stage has `status`:
-- `pending`
-- `in_progress`
-- `completed`
-
-A later stage should not be `completed` while a required predecessor has no usable output.
-
-## 3. understanding stage
-
-### output.goal
-
-One concise sentence describing the user/business outcome.
-
-### output.scope
-
-Concrete capabilities included in this requirement. Do not put implementation tasks here.
-
-### output.out_of_scope
-
-Explicit exclusions or boundaries. Use an empty array when no exclusion is known; do not invent exclusions.
-
-### output.modules
-
-Array of affected code modules.
-
-Each item:
-
+Module:
 ```json
 {
   "id": "M1",
   "side": "frontend",
   "name": "activity-web",
   "repository": "git/ieg/activity-web",
-  "change_summary": "新增活动详情页、报名入口和报名状态展示。"
+  "change_summary": "新增活动详情页、报名入口和状态展示。"
 }
 ```
 
 Rules:
-- `side` is exactly `frontend` or `backend`.
-- `name` is the module/service/application name.
-- `repository` is a repository identifier or URL/path supplied by context. If unknown, use `""`.
-- `change_summary` is one sentence describing the primary change in that module.
-- IDs are unique and stable across regeneration.
-- A database table is not itself a module unless the product explicitly models it as one. Prefer the owning backend module/service.
+- side is `frontend | backend`.
+- repository may be empty only when unknown; do not invent it.
+- change_summary is one concise sentence.
+- module IDs are unique.
 
-### output.assumptions
+Review item types:
 
-Only assumptions that materially affect interpretation, task decomposition, effort, or schedule.
-
-### review_items
-
-Human inputs required or useful before later stages become reliable.
-
-#### Choice item
-
+Choice:
 ```json
 {
   "id": "Q1",
@@ -108,153 +78,134 @@ Human inputs required or useful before later stages become reliable.
   "value": null,
   "custom_value": "",
   "options": ["不限制", "有限制"],
-  "impact": "影响 BE-01 并发控制与一致性设计"
+  "impact": "影响报名接口并发控制与一致性设计"
 }
 ```
 
-Rules:
-- `options` contains AI-generated standard choices only. The workbench provides the separate “自定义” UI option.
-- If the human chooses a standard option, put it in `value`.
-- If the human chooses custom, set `value` to `"自定义"` and put the answer in `custom_value`.
-- Required choice items are unresolved when `value` is null/empty, or when `value == "自定义"` and `custom_value` is empty.
-
-#### Text item
-
+Text:
 ```json
 {
-  "id": "Q3",
+  "id": "Q2",
   "type": "text",
   "question": "还有哪些关键业务规则需要补充？",
   "required": false,
   "ai_assumption": "暂无",
   "value": "",
-  "impact": "补充内容会参与后续任务拆解和估算"
+  "impact": "可能影响后续任务拆解与估算"
 }
 ```
 
-## 4. breakdown stage
+The UI itself adds “自定义”; do not include it in choice options.
 
-`output.task_ids` is the ordered list of IDs shown in the task-breakdown stage.
+## breakdown.json
 
-Rules:
-- Every ID must exist exactly once in top-level `tasks`.
-- Every top-level task must appear in `task_ids`.
-- No duplicate IDs.
-- Dependencies reference task IDs only.
-- Dependency graph must be acyclic.
-- Avoid task granularity that is either too broad to estimate or too tiny to manage.
+Purpose: render the 任务拆解 tab.
 
-The UI allows adding, editing, and deleting tasks. After a human changes tasks, regenerate downstream estimation and scheduling data without reverting the edit.
-
-## 5. shared task object
-
+Task:
 ```json
 {
   "id": "BE-01",
+  "module_id": "M3",
   "title": "报名核心接口",
   "category": "backend",
-  "description": "报名提交、参数校验、幂等和异常处理",
-  "effort_days": 2,
-  "confidence": "medium",
-  "assignee": "后端 A",
-  "start_date": "2026-11-05",
-  "end_date": "2026-11-06",
-  "dependencies": [],
-  "estimate_basis": [
-    "领域逻辑 1d",
-    "幂等与异常 0.5d",
-    "单测与自测 0.5d"
+  "description": "实现报名提交、校验、幂等和异常处理。",
+  "dependencies": []
+}
+```
+
+Rules:
+- category is `frontend | backend | other`.
+- module_id must reference understanding.modules[].id. For cross-module integration/QA tasks, module_id may be null.
+- dependencies reference task IDs.
+- IDs unique; graph acyclic.
+- breakdown owns task definition only. Do not put effort or schedule fields here.
+
+## estimation.json
+
+Purpose: render the 工作量评估 tab.
+
+```json
+{
+  "summary": {
+    "total_effort_days": 8,
+    "confidence_counts": {"high": 3, "medium": 3, "low": 0}
+  },
+  "estimations": [
+    {
+      "task_id": "BE-01",
+      "effort_days": 2,
+      "confidence": "medium",
+      "estimate_basis": [
+        {"item": "领域逻辑", "effort_days": 1},
+        {"item": "幂等与异常", "effort_days": 0.5},
+        {"item": "单测与自测", "effort_days": 0.5}
+      ],
+      "uncertainties": ["名额限制尚未确认"]
+    }
   ]
 }
 ```
 
 Rules:
-- `category`: `frontend` | `backend` | `other`.
-- `effort_days`: positive number, normally in 0.5-day increments unless context supports finer precision.
-- `confidence`: `high` | `medium` | `low`.
-- `assignee`: human-editable display value. Never fabricate a real employee.
-- `start_date <= end_date`.
-- `estimate_basis` must explain the estimate specifically. Avoid vague text such as “based on complexity”.
+- exactly one estimation for every breakdown task.
+- effort_days > 0.
+- confidence is `high | medium | low`.
+- sum estimate_basis effort equals task effort.
+- sum estimations effort equals summary.total_effort_days.
+- confidence_counts exactly reconcile.
 
-## 6. estimation stage
+## scheduling.json
 
-Output:
-
-```json
-{
-  "total_effort_days": 8,
-  "medium_confidence_tasks": ["FE-02", "BE-01", "QA-01"],
-  "high_confidence_tasks": ["FE-01", "BE-02", "BE-03"],
-  "low_confidence_tasks": []
-}
-```
-
-Rules:
-- Total equals the sum of all `tasks[].effort_days`.
-- Confidence buckets are exhaustive and mutually exclusive.
-- IDs in each bucket must match the corresponding task's `confidence`.
-- If a page version omits an empty bucket visually, keep the field in JSON for a stable contract.
-
-## 7. scheduling stage
-
-Output:
+Purpose: render the 排期生成 tab.
 
 ```json
 {
-  "start_date": "2026-11-05",
-  "delivery_date": "2026-11-11",
-  "estimated_working_days": 5,
-  "critical_path": ["BE-01", "FE-02", "QA-01"]
-}
-```
-
-Rules:
-- Dates use `YYYY-MM-DD`.
-- `start_date` is the earliest task start.
-- `delivery_date` is the latest task end.
-- `estimated_working_days` counts workdays in the schedule window unless an explicit team calendar is supplied.
-- Every critical-path ID exists in tasks.
-- A task must not start before a dependency is finished. With day-granularity scheduling, if a dependency ends on date D, the dependent task should start on the next valid workday unless the environment explicitly allows same-day handoff.
-- Detect impossible schedules rather than hiding them.
-
-## 8. revision
-
-```json
-{
-  "version": 3,
-  "last_modified_by": "human",
-  "changes": [
-    "BE-01 effort_days changed from 2 to 2.5"
+  "summary": {
+    "start_date": "2026-11-05",
+    "delivery_date": "2026-11-11",
+    "estimated_working_days": 5,
+    "critical_path": ["BE-01", "FE-02", "QA-01"]
+  },
+  "schedule": [
+    {
+      "task_id": "BE-01",
+      "assignee": "后端 A",
+      "start_date": "2026-11-05",
+      "end_date": "2026-11-06"
+    }
   ]
 }
 ```
 
 Rules:
-- `version` is a positive integer.
-- `last_modified_by`: `ai` or `human`.
-- Append concise changes when updating existing state.
-- Do not manufacture detailed audit history that the system did not capture.
+- exactly one schedule item for every breakdown task.
+- assignee must come from known team context; if unknown use role-level “待分配”, never invent a person.
+- dates are YYYY-MM-DD and start <= end.
+- dependencies must be respected.
+- summary start/delivery equal earliest/latest task dates.
+- critical_path contains existing task IDs.
 
-## Regeneration dependencies
+## revision object
 
-Changes should cascade only downstream:
+All five JSON documents use:
 
-- Understanding/module/review answer change → reconsider breakdown, estimation, scheduling.
-- Task add/delete/dependency change → recompute estimation and scheduling.
-- Effort/confidence change → recompute estimation totals/buckets and scheduling if dates depend on effort.
-- Owner/date change → recompute scheduling only.
-- Unrelated human edits must remain unchanged.
+```json
+{
+  "version": 1,
+  "last_modified_by": "ai",
+  "changes": []
+}
+```
 
-## Page compatibility checklist
+last_modified_by: `ai | human`.
 
-Before output:
-1. Exactly four stages exist: understanding, breakdown, estimation, scheduling.
-2. Understanding modules have frontend/backend side, name, repository, change_summary.
-3. Breakdown task IDs and top-level tasks are one-to-one.
-4. Every task has editable estimation fields.
-5. Every task has editable scheduling fields.
-6. Totals and confidence buckets reconcile.
-7. Dependencies exist and are acyclic.
-8. Dates and critical path are valid.
-9. Review items use only `choice` or `text`.
-10. Run the validator.
+## Freshness
+
+Recommended init.stage_status transitions:
+- initial: understanding=ready, others=pending
+- after understanding: understanding=completed, breakdown=ready
+- if understanding changes: breakdown/estimation/scheduling=stale
+- after breakdown: breakdown=completed, estimation=ready
+- if breakdown changes: estimation/scheduling=stale
+- after estimation: estimation=completed, scheduling=ready
+- after scheduling: scheduling=completed
