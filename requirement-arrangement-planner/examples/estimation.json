@@ -1,0 +1,69 @@
+{
+  "schema_version": "4.0",
+  "requirement_id": "REQ-2048",
+  "summary": {
+    "total_effort_days": 4,
+    "confidence_counts": {
+      "high": 1,
+      "medium": 2,
+      "low": 0
+    }
+  },
+  "estimations": [
+    {
+      "task_id": "FE-01",
+      "effort_days": 1,
+      "confidence": "high",
+      "estimate_basis": [
+        {
+          "item": "页面结构与交互",
+          "effort_days": 0.5
+        },
+        {
+          "item": "自测",
+          "effort_days": 0.5
+        }
+      ],
+      "uncertainties": []
+    },
+    {
+      "task_id": "BE-01",
+      "effort_days": 2,
+      "confidence": "medium",
+      "estimate_basis": [
+        {
+          "item": "领域逻辑",
+          "effort_days": 1
+        },
+        {
+          "item": "幂等与异常",
+          "effort_days": 0.5
+        },
+        {
+          "item": "单测与自测",
+          "effort_days": 0.5
+        }
+      ],
+      "uncertainties": [
+        "名额限制尚未确认"
+      ]
+    },
+    {
+      "task_id": "QA-01",
+      "effort_days": 1,
+      "confidence": "medium",
+      "estimate_basis": [
+        {
+          "item": "联调与验收",
+          "effort_days": 1
+        }
+      ],
+      "uncertainties": []
+    }
+  ],
+  "revision": {
+    "version": 1,
+    "last_modified_by": "ai",
+    "changes": []
+  }
+}
