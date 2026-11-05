@@ -108,7 +108,12 @@ Task:
   "module_id": "M3",
   "title": "报名核心接口",
   "category": "backend",
-  "description": "实现报名提交、校验、幂等和异常处理。",
+  "description": "完成报名模块后端能力改造，覆盖提交、校验、幂等和异常处理。",
+  "work_items": [
+    "报名提交与参数校验",
+    "幂等与重复提交处理",
+    "异常处理与必要自测"
+  ],
   "dependencies": []
 }
 ```
@@ -116,7 +121,13 @@ Task:
 Rules:
 - category is `frontend | backend | other`.
 - module_id must reference understanding.modules[].id. For cross-module integration/QA tasks, module_id may be null.
-- dependencies reference task IDs.
+- a task represents an **assignable module/service responsibility boundary**, not an individual feature action.
+- default: one affected service or independently owned business module maps to one task.
+- multiple APIs/pages/actions inside the same module belong in one task; preserve them in `description` and optional `work_items[]`.
+- `work_items`, when present, is a non-empty list of concise strings describing internal changes. It does not create extra scheduling/estimation units.
+- split one module into multiple tasks only for a real ownership/delivery boundary (for example different owners, repositories, or independently deliverable work).
+- small related changes in the same module/service should be merged.
+- dependencies reference task IDs and express blocking dependencies between task/module deliverables, not internal implementation order.
 - IDs unique; graph acyclic.
 - breakdown owns task definition only. Do not put effort or schedule fields here.
 
