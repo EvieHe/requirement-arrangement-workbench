@@ -35,6 +35,24 @@ Each AI node writes **only its own stage JSON**.
 
 Never overwrite upstream JSON from a downstream stage.
 
+## Task granularity
+
+A breakdown task is the smallest **assignable ownership/delivery unit**, not a list of implementation steps.
+
+Default rule:
+- one affected service or independently owned business module → one task;
+- multiple changes inside the same service/module stay in that task;
+- use `work_items[]` (when useful) and `description` to preserve internal change details;
+- split one module into multiple tasks only when there is a real ownership or delivery boundary, such as different owners, different repositories, or independently deliverable work;
+- merge small related changes when they share the same module/service and owner;
+- cross-module integration/QA may remain a separate task with `module_id = null`.
+
+Do not create separate tasks merely because there are multiple APIs, pages, UI states, CRUD actions, or implementation steps inside the same module.
+
+When a module boundary is unresolved by a required review item, avoid inventing a permanent standalone task. Mark the uncertainty clearly in the task description/work_items or keep the task provisional until the boundary is known.
+
+This rule is intentionally aligned with downstream task-assignment behavior: breakdown should already be close to the units that can be assigned to owners.
+
 ## Cross-stage references
 
 Use stable IDs:
