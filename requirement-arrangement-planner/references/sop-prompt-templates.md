@@ -83,7 +83,7 @@ All JSON must follow `requirement-arrangement-planner` schema 4.0.
    - 同模块 / 同服务的小改动应优先合并；
    - 跨模块联调、QA 可以单独成任务；
    - 未解决的 review_item 如果会改变模块归属，不要把假设的模块边界过早固化成确定任务。
-6. 如果当前环境可用 `requirement-task-assign` skill，可读取其模块/服务/负责人分配规则来帮助判断“哪些改动应属于同一个可分配任务”。这里只用于校准任务边界，不在本节点实际创建或分配 XDPai 子任务。
+6. 阅读 requirement-arrangement-planner 内的 `references/task-ownership.md`，结合当前环境中能够获取到的模块、仓库、负责人/责任团队信息判断任务边界。负责人信息只作为规划参考，不新增独立 Workflow Var；禁止编造负责人，也不要用“后端待分配-A/B”这类虚拟资源槽代替真实责任边界，除非系统确实提供了这样的容量模型。
 7. 生成完整 breakdown JSON。每个 task 必须包含：
    - id
    - module_id
