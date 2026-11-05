@@ -70,6 +70,10 @@ def validate_breakdown(d,init,understanding,errs):
         req(t.get("module_id") is None or isinstance(t.get("module_id"),str),"task.module_id invalid",errs)
         if understanding and t.get("module_id") is not None: req(t["module_id"] in mids,f"unknown module_id {t['module_id']}",errs)
         req(isinstance(t.get("dependencies"),list),"task.dependencies invalid",errs)
+        if "work_items" in t:
+            req(isinstance(t.get("work_items"),list) and len(t.get("work_items",[]))>0,"task.work_items invalid",errs)
+            for w in t.get("work_items",[]):
+                req(isinstance(w,str) and w.strip()!="","task.work_items item invalid",errs)
     req(unique(ids),"duplicate task ids",errs)
     idset=set(ids)
     for tid,deps in graph.items():
