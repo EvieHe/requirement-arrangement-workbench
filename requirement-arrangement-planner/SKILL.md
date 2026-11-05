@@ -20,6 +20,7 @@ Do not generate one giant planning JSON.
 Read:
 - `references/output-contract.md` for exact schemas and cross-file invariants.
 - `references/stage-generation.md` for how to derive each stage.
+- `references/task-ownership.md` for module/service ownership and assignable task boundaries.
 - the corresponding template in `references/templates/`.
 
 ## Stage ownership
