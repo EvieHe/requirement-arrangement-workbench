@@ -5,25 +5,39 @@
     {
       "id": "FE-01",
       "module_id": "M1",
-      "title": "活动详情页面",
+      "title": "活动前端模块改造",
       "category": "frontend",
-      "description": "实现活动详情、报名入口和状态展示。",
+      "description": "完成活动前端模块的详情、报名入口和状态展示改造。",
+      "work_items": [
+        "活动详情展示",
+        "报名入口与交互",
+        "报名状态展示"
+      ],
       "dependencies": []
     },
     {
       "id": "BE-01",
       "module_id": "M2",
-      "title": "报名核心接口",
+      "title": "报名后端模块改造",
       "category": "backend",
-      "description": "实现报名提交、参数校验、幂等和异常处理。",
+      "description": "完成报名模块的提交、校验、幂等和异常处理能力。",
+      "work_items": [
+        "报名提交与参数校验",
+        "幂等与重复提交处理",
+        "异常处理和自测"
+      ],
       "dependencies": []
     },
     {
       "id": "QA-01",
       "module_id": null,
-      "title": "联调与验收",
+      "title": "跨模块联调与验收",
       "category": "other",
       "description": "完成前后端联调和主流程验收。",
+      "work_items": [
+        "前后端接口联调",
+        "主流程验收"
+      ],
       "dependencies": [
         "FE-01",
         "BE-01"
