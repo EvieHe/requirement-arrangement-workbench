@@ -76,33 +76,43 @@ All JSON must follow `requirement-arrangement-planner` schema 4.0.
    - 如果 `requirement_arrangement.breakdown` 已存在，也一并读取。
 3. 必要时再次主动读取当前 XDPai 需求信息，但不要重新生成需求理解阶段的数据。
 4. 加载 requirement-arrangement-planner skill，阅读 breakdown 模板和阶段规则。
-5. 基于 understanding 中的 scope、modules、assumptions，以及已经填写的 review_items 结果，拆解可执行研发任务。
-6. 生成完整 breakdown JSON。每个 task 必须包含：
+5. 基于 understanding 中的 scope、modules、assumptions，以及已经填写的 review_items 结果，拆解可执行研发任务。任务粒度遵循：
+   - 默认一个受影响服务 / 独立业务模块对应一个研发任务；
+   - 同一模块内的多个接口、页面、状态、处理步骤属于同一个任务的内部工作内容，不因功能点不同而拆成多个任务；
+   - 只有存在真实的负责人边界、仓库边界或独立交付边界时，才把同一模块拆成多个任务；
+   - 同模块 / 同服务的小改动应优先合并；
+   - 跨模块联调、QA 可以单独成任务；
+   - 未解决的 review_item 如果会改变模块归属，不要把假设的模块边界过早固化成确定任务。
+6. 如果当前环境可用 `requirement-task-assign` skill，可读取其模块/服务/负责人分配规则来帮助判断“哪些改动应属于同一个可分配任务”。这里只用于校准任务边界，不在本节点实际创建或分配 XDPai 子任务。
+7. 生成完整 breakdown JSON。每个 task 必须包含：
    - id
    - module_id
    - title
    - category
    - description
    - dependencies
-7. module_id 必须引用 understanding.modules[].id；跨模块联调/验收任务可以为 null。
-8. dependencies 只表达真实阻塞关系，必须引用已有 task_id，并保证无环。
-9. 如果已有 breakdown JSON 且包含人工新增、删除、修改的任务，人工修改优先；仅在新需求信息确实要求变化时调整。
-10. 本节点不生成 effort_days、confidence、assignee、start_date、end_date。
-11. 校验 breakdown JSON，修正直到通过。
-12. 使用 set_workflow_var 写入：
+   可增加 `work_items` 列出该模块任务内部的具体改动点，避免为了保留细节而继续拆 task。
+8. module_id 必须引用 understanding.modules[].id；跨模块联调/验收任务可以为 null。
+9. dependencies 只表达不同任务/模块交付之间的真实阻塞关系，不表达同一模块内部的编码顺序；必须引用已有 task_id，并保证无环。
+10. 在输出前做一次任务合并检查：按 module/service 和责任边界检查是否存在“同一模块仅因为功能动作不同而被拆成多个 task”的情况；若存在且没有明确独立负责人/仓库/交付边界，应合并。
+11. 如果已有 breakdown JSON 且包含人工新增、删除、修改的任务，人工修改优先；仅在新需求信息确实要求变化时调整。
+12. 本节点不生成 effort_days、confidence、assignee、start_date、end_date。
+13. 校验 breakdown JSON，修正直到通过。
+14. 使用 set_workflow_var 写入：
     - `requirement_arrangement.breakdown=<完整 breakdown JSON>`
-13. 更新 init.stage_status：
+15. 更新 init.stage_status：
     - breakdown = completed
     - estimation = ready
     - scheduling = pending
     如果本次对已有 breakdown 做了结构性修改，则 scheduling 应视情况标记 stale。
-14. 覆盖写回 `requirement_arrangement.init`。
+16. 覆盖写回 `requirement_arrangement.init`。
 
 【边界】
 
 - 不修改 understanding JSON。
 - 不生成工作量或排期字段。
 - 不为了“完整”而拆出无价值的微任务。
+- 不按“一个接口 / 一个页面 / 一个动作”机械拆任务；优先按模块、服务和责任边界收敛。
 
 ---
 
@@ -127,7 +137,7 @@ All JSON must follow `requirement-arrangement-planner` schema 4.0.
    - confidence
    - estimate_basis
    - uncertainties
-5. estimate_basis 必须拆成具体工作组成，每项包含 item + effort_days；各项人日之和必须等于该任务 effort_days。
+5. estimate_basis 必须拆成具体工作组成，每项包含 item + effort_days；各项人日之和必须等于该任务 effort_days。若 breakdown task 含 `work_items`，优先以这些内部工作项为估算依据。估算仍以“整个模块任务”为一个 estimation，不要因为 work_items 再复制出新的 task 级估算。
 6. confidence 使用 high / medium / low。存在可能显著改变人日的未确认信息时，不要给 high。
 7. 生成 summary：
    - total_effort_days
