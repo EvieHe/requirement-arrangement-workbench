@@ -64,6 +64,8 @@ Rules:
 - repository may be empty only when unknown; do not invent it.
 - change_summary is one concise sentence.
 - module IDs are unique.
+- modules represent real affected services/business modules that can act as planning responsibility boundaries.
+- an unresolved capability whose implementation layer is still unknown must not be represented as a placeholder module; capture it in review_items/uncertainty until its service/module boundary is known.
 
 Review item types:
 
@@ -190,7 +192,8 @@ Purpose: render the 排期生成 tab.
 
 Rules:
 - exactly one schedule item for every breakdown task.
-- assignee must come from known team context; if unknown use role-level “待分配”, never invent a person.
+- assignee must come from known team/ownership context. If unknown use an explicit unresolved value such as “待确认负责人”; never invent a person or artificial resource slot such as “后端待分配-A/B” unless the runtime provides that actual capacity model.
+- when actual resource capacity is unavailable, scheduling is dependency-based/tentative; independent tasks should not be serialized merely because they share a frontend/backend category.
 - dates are YYYY-MM-DD and start <= end.
 - dependencies must be respected.
 - summary start/delivery equal earliest/latest task dates.
