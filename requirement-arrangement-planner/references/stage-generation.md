@@ -44,7 +44,7 @@ A task should be close to what can later be assigned to one owner. APIs, pages, 
 
 Dependencies express **blocking relationships between task/module deliverables**, not internal coding sequence inside one module.
 
-When `requirement-task-assign` is available, its domain/module/service ownership rules may be used to validate whether multiple changes belong to the same assignable responsibility boundary. Use it only as boundary context here; breakdown generation must not create downstream XDPai child tasks.
+Read `references/task-ownership.md` and use its module/service/repository/owner rules to validate whether multiple changes belong to the same assignable responsibility boundary.
 
 Before finalizing breakdown, perform a consolidation pass:
 - group tasks by module/service and likely ownership;
