@@ -17,6 +17,10 @@ Generate only understanding.json:
 
 Identify repositories from actual context/tools. Unknown repository → empty string, not a guess.
 
+Only put a real affected service/business module in `modules[]` when its implementation boundary is sufficiently known to serve as a planning responsibility boundary. A capability whose implementation layer is still unresolved (for example “this may belong to acts / data / battle”) is not yet a module. Keep it in `review_items` and/or assumptions until the boundary is resolved. Do not create placeholder modules such as “xxx 实现层待确认”.
+
+Separate confirmed business rules from uncertainty in reasoning: requirement facts must not be treated as assumptions merely because the AI restates them. Use `assumptions[]` only for facts that are not explicitly confirmed by the requirement/context.
+
 If understanding is edited later, downstream stage JSON is not rewritten here; mark downstream stages stale through init when possible.
 
 ## Breakdown
@@ -75,7 +79,15 @@ Read:
 
 Generate only scheduling.json.
 
-Create exactly one schedule item per task. Respect dependencies and parallelism. Do not invent real assignees. Compute critical path from dependency/schedule impact.
+Create exactly one schedule item per confirmed breakdown task. Respect dependencies and parallelism. Read `references/task-ownership.md`.
+
+Prefer actual owner/team/capacity/calendar context. Do not invent people or artificial resource slots such as “后端待分配-A/B”.
+
+If the actual owner is unknown, use an explicit unresolved assignee such as `待确认负责人` (or a known team/role if that is the highest-confidence fact). When real capacity is unavailable, generate only a dependency-based tentative schedule: independent tasks may run in parallel, and the result must not imply a resource-constrained plan that the system cannot justify.
+
+If a task itself is provisional because its responsibility boundary is unresolved, do not assign false-precision dates as if it were a confirmed delivery unit; preserve the uncertainty in the scheduling result/report according to what the current schema/runtime supports.
+
+Compute critical path from actual dependency/schedule impact, not from an invented resource serialization.
 
 Do not change task definitions or effort estimates.
 
