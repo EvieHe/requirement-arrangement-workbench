@@ -28,7 +28,27 @@ Read:
 
 Generate only breakdown.json.
 
-Use understanding.modules[].id as module_id. Break work into executable tasks. Dependencies express true blocking order, not mere relation.
+Use understanding.modules[].id as module_id.
+
+Break work by **responsibility boundary**, not by feature step:
+
+1. Start from `understanding.modules[]`.
+2. By default, create one task for one affected service / independently owned business module.
+3. Put multiple changes inside that module into the same task. Use a complete `description` and, when useful, `work_items[]` to enumerate the internal changes.
+4. Split a module into more than one task only when there is a real boundary: different owner, different repository, independently deliverable work, or another explicit assignment boundary.
+5. Small related changes in the same module/service should be merged.
+6. Cross-module integration/QA can be a separate task with `module_id = null`.
+7. If a required review item leaves the implementation module unresolved, do not prematurely materialize a confident standalone module/task. Preserve the uncertainty and allow the task to remain provisional or merge after the review answer.
+
+A task should be close to what can later be assigned to one owner. APIs, pages, UI states, handlers, and implementation steps inside the same module are normally `work_items`, not separate tasks.
+
+Dependencies express **blocking relationships between task/module deliverables**, not internal coding sequence inside one module.
+
+Before finalizing breakdown, perform a consolidation pass:
+- group tasks by module/service and likely ownership;
+- merge tasks that differ only by feature action inside the same responsibility boundary;
+- verify every task represents an independently assignable unit;
+- verify no requirement detail was lost when merging.
 
 Do not generate effort, confidence, assignee, or dates.
 
