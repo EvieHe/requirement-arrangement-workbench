@@ -89,8 +89,9 @@ Example:
 Until the responsibility boundary is confirmed:
 
 - keep the uncertainty visible;
-- prefer attaching it to the most likely existing module as an uncertainty/work item when appropriate; or
-- keep it provisional and avoid treating it as a confirmed independent delivery unit.
+- do not add a placeholder entry to `understanding.modules[]` merely to represent the capability;
+- keep the unresolved boundary in a required review item and/or explicit uncertainty;
+- if there is a clearly most-likely existing real module, the capability may be described as a provisional work item/uncertainty there, but it must not become a separate confirmed task until the boundary is resolved.
 
 The planner may use a required review item to resolve this boundary.
 
