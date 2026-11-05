@@ -2,7 +2,18 @@
   "schema_version": "4.0",
   "requirement_id": "<requirement-id>",
   "tasks": [
-    {"id":"FE-01","module_id":"M1","title":"<task>","category":"frontend","description":"<description>","dependencies":[]}
+    {
+      "id": "FE-01",
+      "module_id": "M1",
+      "title": "<module/service level task>",
+      "category": "frontend",
+      "description": "<complete responsibility-boundary description>",
+      "work_items": [
+        "<change item 1>",
+        "<change item 2>"
+      ],
+      "dependencies": []
+    }
   ],
   "revision": {"version": 1, "last_modified_by": "ai", "changes": []}
 }
